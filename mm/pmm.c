@@ -36,8 +36,7 @@ void init_pmm()
 
 	mmap_entry_t *map_entry;
 
-	for (map_entry = mmap_start_addr; map_entry < mmap_end_addr; map_entry++) {
-		printk("%d %x\n", map_entry->type, mmap_end_addr);
+	for (map_entry = mmap_start_addr; (uint32_t)map_entry < mmap_end_addr; map_entry++) {
 		if (map_entry->type == 1 && map_entry->base_addr_low == 0x100000) {
 			uint32_t page_addr = map_entry->base_addr_low + (uint32_t)(kern_end - kern_start);
 			uint32_t length = map_entry->base_addr_low + map_entry->length_low;

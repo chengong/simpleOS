@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "heap.h"
 
 void kern_init();
 
@@ -70,20 +71,24 @@ void kern_init()
 
 	init_pmm();
 
+    init_vmm();
+
 	printk_color(rc_black, rc_red, "\n Total physical page is %u\n", phy_page_count);
 
 	uint32_t alloc_addr = NULL;
 
 	printk_color(rc_black, rc_light_brown, "Test physical page alloc : \n");
 
-	alloc_addr = pmm_alloc_page();
+/*	alloc_addr = pmm_alloc_page();
 	printk_color(rc_black, rc_light_brown, "Alloc physical addr: 0x%08X\n", alloc_addr);
 	alloc_addr = pmm_alloc_page();
 	printk_color(rc_black, rc_light_brown, "Alloc physical addr: 0x%08X\n", alloc_addr);
 	alloc_addr = pmm_alloc_page();
 	printk_color(rc_black, rc_light_brown, "Alloc physical addr: 0x%08X\n", alloc_addr);
 	alloc_addr = pmm_alloc_page();
-	printk_color(rc_black, rc_light_brown, "Alloc physical addr: 0x%08X\n", alloc_addr);
+	printk_color(rc_black, rc_light_brown, "Alloc physical addr: 0x%08X\n", alloc_addr);*/
+
+    test_heap();
 
 	while (1) {
 		asm volatile ("hlt");

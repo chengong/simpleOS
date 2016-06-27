@@ -113,7 +113,7 @@ void isr_handler(pt_regs *regs)
 
 void irq_handler(pt_regs *regs)
 {
-	if (regs->int_no >- 40) {
+	if (regs->int_no >= 40) {
 		outb(0xA0, 0x20); // send reset signal to slave
 	}
 
