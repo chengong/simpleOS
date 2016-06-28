@@ -7,12 +7,17 @@
 #include "pmm.h"
 #include "vmm.h"
 #include "heap.h"
+#include "sched.h"
+#include "task.h"
+#include "common.h"
 
 void kern_init();
 
 multiboot_t *glb_mboot_ptr;
 
 char kern_stack[STACK_SIZE];
+
+uint32_t kern_stack_top; 
 
 __attribute__((section(".init.data"))) pgd_t* pgd_tmp  = (pgd_t *)0x1000;
 __attribute__((section(".init.data"))) pgd_t* pte_low  = (pgd_t *)0x2000;
@@ -41,13 +46,26 @@ __attribute__((section(".init.text"))) void kern_entry()
 	cr0 |= 0x80000000;
 	asm volatile ("mov %0, %%cr0" : : "r" (cr0));
 
-	uint32_t kern_stack_top = ((uint32_t)kern_stack + STACK_SIZE) & 0xFFFFFFF0;
+	kern_stack_top = ((uint32_t)kern_stack + STACK_SIZE) & 0xFFFFFFF0;
 	asm volatile ("mov %0, %%esp\n\t"
 			"xor %%ebp, %%ebp" : : "r" (kern_stack_top));
 
 	glb_mboot_ptr = mboot_ptr_tmp + PAGE_OFFSET;
 
 	kern_init();
+}
+
+int flag = 0;
+
+int thread(void *arg)
+{
+    while (1) {
+        if (flag == 1) {
+            printk_color(rc_black, rc_green, "B");
+            flag = 0;
+        }
+    }
+    return 0;
 }
 
 void kern_init()
@@ -90,7 +108,22 @@ void kern_init()
 
     test_heap();
 
+    init_sched();
+
+    kernel_thread(thread, NULL);
+
+    enable_intr();
+
+	while (1) {
+        if (flag == 0) {
+            printk_color(rc_black, rc_red, "A");
+            flag = 1;
+        }
+	}
+
 	while (1) {
 		asm volatile ("hlt");
 	}
 }
+
+

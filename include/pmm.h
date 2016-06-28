@@ -15,6 +15,7 @@
 
 extern uint8_t kern_start[];
 extern uint8_t kern_end[];
+extern uint32_t kern_stack_top;
 
 extern uint32_t phy_page_count;
 

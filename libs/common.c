@@ -23,3 +23,12 @@ inline uint16_t inw(uint16_t port)
 	return ret;
 }
 
+inline void enable_intr()
+{
+    asm volatile ("sti");
+}
+
+inline void disable_intr()
+{
+    asm volatile ("cli" ::: "memory");
+}
